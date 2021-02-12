@@ -4,13 +4,21 @@ import {Scatter} from "react-chartjs-2";
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 
-import eventsData from "../sample_data/events";
-import paramsData from "../sample_data/params";
+import { useParams } from 'react-router-dom';
 
-const ScatterChart = ()=>{
-    const [yaxis,setYaxis] = useState(0);
-    const [xaxis,setXaxis] = useState(0);
-    const [label,setLabel] = useState(['x-axis','y-axis'])
+interface graphInterface{
+    lableData:any;
+    graphData:any;
+    eventsData:any[];
+    id:string;
+    paramsData:any[];
+}
+const ScatterChart = (props:graphInterface)=>{
+    const [yaxis,setYaxis] = useState(props.graphData['paramY']);
+    const [xaxis,setXaxis] = useState(props.graphData['paramX']);
+    const [Xlabel,setXLabel] = useState(props.graphData['paramXName'])
+    const [Ylabel,setYLabel] = useState(props.graphData['paramYName'])
+    // const {workspaceId} = useParams()
     const xstepSize = 10000;
     const ystepSize = 10000;
     const options = {
@@ -21,7 +29,7 @@ const ScatterChart = ()=>{
         scales: {
             xAxes: [{
                     scaleLabel: {
-                        labelString: label[0],
+                        labelString: Xlabel,
                         display: true
                     },
                     ticks: {
@@ -29,12 +37,12 @@ const ScatterChart = ()=>{
                     },
                     gridLines: {
                         display: false
-                    }
-                    // display: false
+                    },
+                    display: true
                 }],
             yAxes: [{
                     scaleLabel: {
-                        labelString: label[1],
+                        labelString: Ylabel,
                         display: true
                     },
                     ticks: {
@@ -53,7 +61,7 @@ const ScatterChart = ()=>{
     }
     let newData:any[];
     const getChartData = (x:number,y:number)=>{
-        return eventsData.map((res,i)=>{
+        return props.eventsData.map((res,i)=>{
             return({x:res[x],y:res[y]})
         })
     }
@@ -64,37 +72,16 @@ const ScatterChart = ()=>{
             pointBorderColor: "black",
             pointBackgroundColor: "black","data":newData}]
         });
-        const getAxisLabel = (paramsData:any[],x:number,y:number)=>{
-            return(
-                paramsData.filter((res,i)=>{
-                    if(res.key == x){
-                        return res.value
-                    }else if(res.key == y){
-                        return res.value
-                    }
-                })  
-            )
-        };
     useEffect(()=>{
         newData = getChartData(xaxis,yaxis);
-        let lb = getAxisLabel(paramsData,xaxis,yaxis);
-        let xAxisLabel:string;
-        let yAxisLabel:string;
-        if(lb.length > 1){
-            xAxisLabel = lb[0].value;
-            yAxisLabel = lb[1].value;
-            setLabel([xAxisLabel,yAxisLabel]);
-        }else if(lb.length == 0){
-            xAxisLabel = lb[0].value;
-            yAxisLabel = lb[0].value;
-            setLabel([xAxisLabel,yAxisLabel]);
-        }
         setChartData({
             "datasets":[{
-                backgroundColor: "blue",
-                pointBorderColor: "blue",
+                backgroundColor: "black",
+                pointBorderColor: "black",
                 pointBackgroundColor: "blue","data":newData}]
             })
+            setXLabel(props.lableData[xaxis]);
+            setYLabel(props.lableData[yaxis]);
     },[yaxis,xaxis])
 
     const handleXaxisChange = (event:any) => {
@@ -105,33 +92,34 @@ const ScatterChart = ()=>{
     };
     return(
         <>
-            <div style={{display:"flex",flexDirection:"column",margin:"2rem",maxWidth:"500px"}}>
-                <div style={{display:"flex",flexDirection:"row"}}>
-                    <Select
-                        value={yaxis}
-                        onChange={handleYaxisChange}
-                        style={{marginBottom:"auto"}}
-                    >
-                        {
-                            paramsData.map((data,index)=>{
-                                return(
-                                    <MenuItem key={data.key} value={data.key}>{data.value}</MenuItem>
-                                )
-                            })
-                        }
-                    </Select>
-                    <div>
-                        <Scatter data={chartData} options={options} height={400} width={400} />
+            <div style={{display:"flex",flexDirection:"column"}}>
+                <div className="mx-3 my-2">
+                    <div style={{display:"flex",flexDirection:"row"}}>
+                        <Select
+                            value={yaxis}
+                            onChange={handleYaxisChange}
+                            style={{marginBottom:"auto"}}
+                        >
+                            {
+                                props.paramsData.map((data,index)=>{
+                                    return(
+                                        <MenuItem key={data.key} value={data.key}>{data.value}</MenuItem>
+                                    )
+                                })
+                            }
+                        </Select>
+                        <div>
+                            <Scatter data={chartData} options={options} height={400} width={400} />
+                        </div>
                     </div>
-                </div>
-                <div style={{width:"100%",display:"flex"}}>
+                    <div style={{width:"100%",display:"flex"}}>
                     <Select
                         value={xaxis}
                         onChange={handleXaxisChange}
                         style={{marginLeft:"auto"}}
                     >
                         {
-                            paramsData.map((data,index)=>{
+                            props.paramsData.map((data,index)=>{
                                 return(
                                     <MenuItem key={data.key} value={data.key}>{data.value}</MenuItem>
                                 )
@@ -139,8 +127,8 @@ const ScatterChart = ()=>{
                         }
                     </Select>
                 </div>
+                </div>
             </div>
-            
         </>
     )
 }
