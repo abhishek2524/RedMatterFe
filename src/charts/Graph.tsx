@@ -1,9 +1,15 @@
 import React,{useState,useEffect} from 'react';
 import { useParams } from 'react-router-dom';
+import { updateGraph } from '../common/ReqHandling';
 import ScatterChart from './ScatterChart';
 
 interface ParamTypes {
     workspaceId: string;
+}
+interface onChangedata{
+    paramX:number;
+    paramY:number;
+    graphId:string;
 }
 
 const Graph = (props:any)=>{
@@ -22,6 +28,25 @@ const Graph = (props:any)=>{
             }
         });
     },[]);
+    const onChangeEvent = (data:onChangedata)=>{
+        let qryString:string = '';
+        if(data.paramX != undefined){
+            if(qryString == ''){
+                qryString = `${qryString}paramX=${data.paramX}`;
+            }else{
+                qryString = qryString+'&paramX='+data.paramX;
+            }
+        }
+        if(data.paramY != undefined){
+            if(qryString == ''){
+                qryString = `${qryString}paramY=${data.paramY}`;
+            }else{
+                qryString = qryString+'&paramY='+data.paramY;
+            }
+        }
+        const url = `http://localhost:5000/graphs/${workspaceId}/${data.graphId}?${qryString}`;        
+        updateGraph(url);
+    }
     return (
         <>
         <div className="container-fluid">
@@ -29,7 +54,10 @@ const Graph = (props:any)=>{
             {
                 graphData.map((data:any)=>{
                     return (
-                        <ScatterChart key={data._id} id={data._id} paramsData={props.params} lableData={lableObj} graphData={data} eventsData={props.events}/>
+                        <>
+                        <h1>{data.length}</h1>
+                        <ScatterChart onChangeEvent={onChangeEvent} key={data._id} id={data._id} paramsData={props.params} lableData={lableObj} graphData={data} eventsData={props.events}/>
+                        </>
                     )
                 })
             }

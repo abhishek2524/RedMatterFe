@@ -9,7 +9,7 @@ const WorkSpaceComponent = (props:any)=>{
                     <div className="card">
                         <div className="card-body">
                             <p>WorkspaceId : {props.res.workspaceId}</p>
-                            <Link className="btn btn-info" to={`/plot/${props.res.workspaceId}`}>Show Chart</Link>
+                            <Link className="btn btn-info" to={`/workspace/${props.res.workspaceId}`}>Show Chart</Link>
                         </div>
                     </div>
                     </div>

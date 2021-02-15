@@ -4,6 +4,8 @@ import './App.css';
 import Home from './Components/Home';
 import { Route, Switch } from 'react-router-dom';
 import Graph from './charts/Graph';
+import { fetchEventsData, fetchGraphData ,fetchParamsData,addGraph} from './common/ReqHandling';
+import Breadcrumbs from './common/Breadcrumbs';
 
 function App() {
 
@@ -13,72 +15,60 @@ function App() {
     const [events,setEvents] = useState([]);
     const [params,setParams] = useState([]);
 
-    const fetchdata = async ()=>{
-        try{
-            const res = await fetch("http://localhost:5000/graphs")
-            res.json()
-            .then((res)=>{
-                setWorkspace(res);                                
-                setIsLoad(false);
-            })
-            .catch((err)=>{
-                setError(true);
-                setIsLoad(false);
-            })
-        }catch(e){
-            setError(true);
+    const getGraphData = async()=>{
+        const data = await fetchGraphData();
+        if(data.length){
+            setWorkspace(data);
             setIsLoad(false);
-        } 
-    }
-
-    const fetchEvents = async ()=>{
-        try{
-            const res = await fetch("http://localhost:5000/events")
-            res.json()
-            .then((res)=>{
-                setEvents(res);
-                setIsLoad(false);
-            })
-            .catch((err)=>{
-                setError(true);
-                setIsLoad(false);
-            })
-        }catch(e){
+            localStorage.setItem('workspacedata',JSON.stringify(data));
+        }else{
             setError(true);
-            setIsLoad(false);
         }
     }
-    const fetchParams = async ()=>{
-        try{
-            const res = await fetch("http://localhost:5000/params")
-            res.json()
-            .then((res)=>{
-                setParams(res);                          
-                setIsLoad(false);
-            })
-            .catch((err)=>{
-                setError(true);
-                setIsLoad(false);
-            })
-        }catch(e){
-            setError(true);
+    const getEventsData = async()=>{
+        const data = await fetchEventsData();
+        if(data.length){
+            setEvents(data);
             setIsLoad(false);
+            localStorage.setItem('events',JSON.stringify(data));
+        }else{
+            setError(true);
+        }
+    }
+
+    const getParamsData = async()=>{
+        const data = await fetchParamsData();
+        if(data.length){
+            setParams(data);
+            setIsLoad(false);
+            localStorage.setItem('params',JSON.stringify(data));
+        }else{
+            setError(true);
+        }
+    }
+
+    const createGraph = async(id:string)=>{
+        const data = await addGraph(id);
+        if(data.status == 200 && data.data.length > 0){
+            const newGraphData = data.data || [];
+            setWorkspace(newGraphData);
         }
     }
 
     useEffect(()=>{
-        fetchdata();
-        fetchEvents();
-        fetchParams();
+        getGraphData();
+        getEventsData();
+        getParamsData();
     },[])
     
 
 
   return (
     <>
+    <Breadcrumbs onClickFun={createGraph}/>
     <Switch>
-      <Route exact path="/" render={()=><Home events={events} params={params} error={error} workspacedata={workspacedata} isLoading={isLoading} /> }/>
-      <Route exact path="/plot/:workspaceId" render={()=><Graph events={events} params={params} workspacedata={workspacedata}/>}/>
+      <Route exact path="/" component={()=><Home events={events} params={params} error={error} workspacedata={workspacedata} isLoading={isLoading} /> }/>
+      <Route exact path="/workspace/:workspaceId" component={()=><Graph events={events} params={params} workspacedata={workspacedata}/>}/>
     </Switch>
     </>
   );

@@ -12,6 +12,7 @@ interface graphInterface{
     eventsData:any[];
     id:string;
     paramsData:any[];
+    onChangeEvent:any;
 }
 const ScatterChart = (props:graphInterface)=>{
     const [yaxis,setYaxis] = useState(props.graphData['paramY']);
@@ -86,9 +87,11 @@ const ScatterChart = (props:graphInterface)=>{
 
     const handleXaxisChange = (event:any) => {
         setXaxis(event.target.value);
+        props.onChangeEvent({paramX:event.target.value,graphId:props.id});
     };
     const handleYaxisChange = (event:any) => {
         setYaxis(event.target.value);
+        props.onChangeEvent({paramY:event.target.value,graphId:props.id});
     };
     return(
         <>
