@@ -1,14 +1,11 @@
-import React, { useEffect, useState,useRef } from 'react';
-import Chartjs from 'chart.js';
-import Scatter from './Scatter';
+import React, { useEffect, useState } from 'react';
+import {Scatter} from "react-chartjs-2";
 
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 
 import { useParams } from 'react-router-dom';
-interface ParamTypes {
-    workspaceId: string;
-}
+
 interface graphInterface{
     lableData:any;
     graphData:any;
@@ -20,11 +17,49 @@ interface graphInterface{
 const ScatterChart = (props:graphInterface)=>{
     const [yaxis,setYaxis] = useState(props.graphData['paramY']);
     const [xaxis,setXaxis] = useState(props.graphData['paramX']);
-    const [Xlabel,setXLabel] = useState(props.graphData['paramXName']);
-    const [Ylabel,setYLabel] = useState(props.graphData['paramYName']);
-    const [graphData,setGraphData] = useState(props.graphData);
-    const {workspaceId} = useParams<ParamTypes>();
-
+    const [Xlabel,setXLabel] = useState(props.graphData['paramXName'])
+    const [Ylabel,setYLabel] = useState(props.graphData['paramYName'])
+    // const {workspaceId} = useParams()
+    const xstepSize = 10000;
+    const ystepSize = 10000;
+    const options = {
+        legend:{
+            display:false
+        },
+        responsive:true,
+        scales: {
+            xAxes: [{
+                    scaleLabel: {
+                        labelString: Xlabel,
+                        display: true
+                    },
+                    ticks: {
+                        stepSize:xstepSize,
+                    },
+                    gridLines: {
+                        display: false
+                    },
+                    display: true
+                }],
+            yAxes: [{
+                    scaleLabel: {
+                        labelString: Ylabel,
+                        display: true
+                    },
+                    ticks: {
+                        // beginAtZero: true,
+                        // max: 250000,
+                        // min:0,
+                        stepSize:ystepSize,
+                        // maxTicksLimit:250000
+                    },
+                    gridLines: {
+                        display: false
+                    }
+                    // display: false
+                }]
+        }
+    }
     let newData:any[];
     const getChartData = (x:number,y:number)=>{
         return props.eventsData.map((res,i)=>{
@@ -51,62 +86,16 @@ const ScatterChart = (props:graphInterface)=>{
     },[yaxis,xaxis])
 
     const handleXaxisChange = (event:any) => {
-        const newAxis = event.target.value;
-        const newAxisLable = props.lableData[newAxis];
-        const newGraphData = {...graphData,paramX:newAxis,paramXName:newAxisLable}
-        setGraphData(newGraphData);
-        setXaxis(newAxis);
-        props.onChangeEvent({reqData:newGraphData,paramX:event.target.value,graphId:props.id});
+        setXaxis(event.target.value);
+        props.onChangeEvent({paramX:event.target.value,graphId:props.id});
     };
     const handleYaxisChange = (event:any) => {
-        const newAxis = event.target.value;
-        const newAxisLable = props.lableData[newAxis];
-        const newGraphData = {...graphData,paramY:newAxis,paramYName:newAxisLable}
-        setGraphData(newGraphData);
-        setYaxis(newAxis);
+        setYaxis(event.target.value);
         props.onChangeEvent({paramY:event.target.value,graphId:props.id});
     };
     return(
         <>
-            <div className="mx-2 my-2" style={{position: "relative", height:'fit-content', width:`fit-content`,border:'1px solid black'}}>
-                <div style={{display:"flex",flexDirection:"column"}}>
-                    <div style={{display:"flex",flexDirection:"row"}}>
-                        <div className="mb-auto">
-                            <Select
-                                value={yaxis}
-                                onChange={handleYaxisChange}
-                                style={{marginBottom:"auto"}}
-                            >
-                                {
-                                    props.paramsData.map((data,index)=>{
-                                        return(
-                                            <MenuItem key={data.key} value={data.key}>{data.value}</MenuItem>
-                                        )
-                                    })
-                                }
-                            </Select>
-                        </div>
-                        <Scatter workspaceId={workspaceId} graphData={graphData} graphId={graphData._id} yaxis={graphData.paramY} xaxis={graphData.paramX} Xlabel={Xlabel} Ylabel={Ylabel} chartData={chartData}/>
-                        
-                    </div>
-                    <div className="ml-auto">
-                    <Select
-                        value={xaxis}
-                        onChange={handleXaxisChange}
-                        style={{marginLeft:"auto"}}
-                    >
-                        {
-                            props.paramsData.map((data,index)=>{
-                                return(
-                                    <MenuItem key={data.key} value={data.key}>{data.value}</MenuItem>
-                                )
-                            })
-                        }
-                    </Select>
-                    </div>
-                </div>
-            </div>
-            {/* <div style={{display:"flex",flexDirection:"column"}}>
+            <div style={{display:"flex",flexDirection:"column"}}>
                 <div className="mx-3 my-2">
                     <div style={{display:"flex",flexDirection:"row"}}>
                         <Select
@@ -142,7 +131,7 @@ const ScatterChart = (props:graphInterface)=>{
                     </Select>
                 </div>
                 </div>
-            </div> */}
+            </div>
         </>
     )
 }

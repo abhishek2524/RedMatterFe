@@ -10,7 +10,6 @@ interface onChangedata{
     paramX:number;
     paramY:number;
     graphId:string;
-    reqData:any;
 }
 
 const Graph = (props:any)=>{
@@ -30,8 +29,23 @@ const Graph = (props:any)=>{
         });
     },[]);
     const onChangeEvent = (data:onChangedata)=>{
-        const url = `http://localhost:5000/graphs/${workspaceId}/${data.graphId}`;        
-        updateGraph(url,data.reqData);
+        let qryString:string = '';
+        if(data.paramX != undefined){
+            if(qryString == ''){
+                qryString = `${qryString}paramX=${data.paramX}`;
+            }else{
+                qryString = qryString+'&paramX='+data.paramX;
+            }
+        }
+        if(data.paramY != undefined){
+            if(qryString == ''){
+                qryString = `${qryString}paramY=${data.paramY}`;
+            }else{
+                qryString = qryString+'&paramY='+data.paramY;
+            }
+        }
+        const url = `http://localhost:5000/graphs/${workspaceId}/${data.graphId}?${qryString}`;        
+        // updateGraph(url);
     }
     return (
         <>

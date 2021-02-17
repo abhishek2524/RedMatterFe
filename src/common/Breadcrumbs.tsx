@@ -15,9 +15,9 @@ export default function (props:any) {
     <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
             <li key='main' className="breadcrumb-item text-primary my-auto">
-                <Link color='inherit' component={RouterLink} to='/'>
+                <a color='inherit' href="/">
                     My Workspace
-                </Link>
+                </a>
             </li>
             {
                 pathnames.map((value, index) => {

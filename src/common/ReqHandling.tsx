@@ -1,7 +1,8 @@
 import axios from 'axios';
-export const updateGraph = async(url:string)=>{
+export const updateGraph = async(url:string,reqdata:any)=>{
     try{
-        const data =await axios.patch(url);
+        console.log('2323232323>>',reqdata)
+        const res =await axios.patch(url,reqdata);
         console.log("Successfully Updated")
     }catch(err){
         console.log("Failed To Updated")
