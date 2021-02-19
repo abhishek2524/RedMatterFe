@@ -40,9 +40,7 @@ const Graph = (props:any)=>{
             {
                 graphData.map((data:any)=>{
                     return (
-                        <>
                         <ScatterChart onChangeEvent={onChangeEvent} key={data._id} id={data._id} paramsData={props.params} lableData={lableObj} graphData={data} eventsData={props.events}/>
-                        </>
                     )
                 })
             }
