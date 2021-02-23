@@ -1,4 +1,5 @@
-.ui-widget-header {
+@import '~antd/dist/antd.css';
+/* .ui-widget-header {
     background:#b9cd6d;
     border: 1px solid #b9cd6d;
     color: #FFFFFF;
@@ -10,4 +11,27 @@
     color: #333333;
  }
  #resizable { width: 150px; height: 150px; padding: 0.5em;
-    text-align: center; margin: 0; }
+    text-align: center; margin: 0; } */
+
+    .body{
+       background: red;
+       height: 100vh;
+       width: 100vw;
+    }
+
+    .site-layout-content {
+      min-height: 280px;
+      padding: 24px;
+      background: #fff;
+    }
+    #components-layout-demo-top .logo {
+      float: left;
+      width: 120px;
+      height: 31px;
+      margin: 16px 24px 16px 0;
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .ant-row-rtl #components-layout-demo-top .logo {
+      float: right;
+      margin: 16px 0 16px 24px;
+    }

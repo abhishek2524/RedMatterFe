@@ -12,6 +12,7 @@
     "@types/node": "^12.19.16",
     "@types/react": "^17.0.1",
     "@types/react-dom": "^17.0.0",
+    "antd": "^4.12.3",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "chart.js": "^2.9.4",
@@ -57,6 +58,8 @@
     "@types/chart.js": "^2.9.30",
     "@types/jquery": "^3.5.5",
     "@types/react-router-dom": "^5.1.7",
-    "jqueryui": "^1.11.1"
+    "css-loader": "^5.0.2",
+    "jqueryui": "^1.11.1",
+    "style-loader": "^2.0.0"
   }
 }
